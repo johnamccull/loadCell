@@ -4,6 +4,8 @@
         "optional": "cpp",
         "iostream": "cpp",
         "chrono": "cpp",
-        "*.tcc": "cpp"
+        "*.tcc": "cpp",
+        "ostream": "cpp",
+        "thread": "cpp"
     }
 }

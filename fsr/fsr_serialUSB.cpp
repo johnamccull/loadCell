@@ -3,6 +3,7 @@
 #include <string>
 #include <thread> // For sleep functions
 #include <chrono> // For time duration
+#include <iomanip>
 using namespace std;
 using namespace mn::CppLinuxSerial;
 
@@ -23,20 +24,30 @@ int main() {
             size_t bytesRead = serialPort.Read(response.data(), response.size());  // Read response into the buffer
             response.resize(bytesRead);  // Resize to actual bytes read
 
-            if (bytesRead > 0) {  // Only process if data was read
-                response.resize(bytesRead);  // Resize to actual bytes read
+            
 
-                // Convert to string if the data is ASCII or print as hex values
-                string responseStr(response.begin(), response.end());
+            if (bytesRead >= 7) {  // Ensure we have enough bytes to read header and values
+                // Extract the frame header
+                uint32_t header = (response[0] << 24) | (response[1] << 16) | (response[2] << 8) | response[3];
 
-                // Print the received data
-                cout << "Received Data: " << responseStr << endl;
-
-                // Alternatively, print as hex values
-                // for (uint8_t byte : response) {
-                //     cout << hex << static_cast<int>(byte) << " ";
-                // }
-                // cout << endl;
+                if (header == 0xAA55AA55) {  // Verify the header
+                    // Decode the ADC values
+                    uint16_t adcValues[3];
+                    
+                    adcValues[0] = (response[4] << 8) | response[5];
+                    adcValues[1] = (response[6] << 8) | response[7];
+                    adcValues[2] = (response[8] << 8) | response[9];
+                    
+                    // Print the ADC values
+                    std::cout << "ADC Values: " 
+                              << adcValues[0] << " " 
+                              << adcValues[1] << " " 
+                              << adcValues[2] << std::endl;
+                } else {
+                    std::cerr << "Invalid header: 0x" 
+                              << std::hex << std::setw(8) << std::setfill('0') << header 
+                              << std::dec << std::endl;
+                }
             }
 
             // Sleep to prevent overwhelming the serial port with requests
