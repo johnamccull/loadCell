@@ -24,29 +24,27 @@ int main() {
             size_t bytesRead = serialPort.Read(response.data(), response.size());  // Read response into the buffer
             response.resize(bytesRead);  // Resize to actual bytes read
 
-            
 
-            if (bytesRead >= 7) {  // Ensure we have enough bytes to read header and values
-                // Extract the frame header
-                uint32_t header = (response[0] << 24) | (response[1] << 16) | (response[2] << 8) | response[3];
 
-                if (header == 0xAA55AA55) {  // Verify the header
-                    // Decode the ADC values
-                    uint16_t adcValues[3];
-                    
-                    adcValues[0] = (response[4] << 8) | response[5];
-                    adcValues[1] = (response[6] << 8) | response[7];
-                    adcValues[2] = (response[8] << 8) | response[9];
-                    
-                    // Print the ADC values
-                    std::cout << "ADC Values: " 
-                              << adcValues[0] << " " 
-                              << adcValues[1] << " " 
-                              << adcValues[2] << std::endl;
-                } else {
-                    std::cerr << "Invalid header: 0x" 
-                              << std::hex << std::setw(8) << std::setfill('0') << header 
-                              << std::dec << std::endl;
+            if (bytesRead >= 10) {  // 4 bytes header + 3 * 2 bytes for ADC values = 10 bytes
+                for (size_t i = 0; i <= bytesRead - 10; ++i) {
+                    // Check for the header
+                    if (response[i] == 0xAA && response[i + 1] == 0x55 && response[i + 2] == 0xAA && response[i + 3] == 0x55) {
+                        // Decode the ADC values
+                        uint16_t adcValues[3];
+                        adcValues[0] = (response[i + 4] << 8) | response[i + 5];
+                        adcValues[1] = (response[i + 6] << 8) | response[i + 7];
+                        adcValues[2] = (response[i + 8] << 8) | response[i + 9];
+
+                        // Print the ADC values
+                        std::cout << "ADC Values: "
+                                  << adcValues[0] << " "
+                                  << adcValues[1] << " "
+                                  << adcValues[2] << std::endl;
+
+                        // Move the index forward to skip over the current data
+                        i += 9;
+                    }
                 }
             }
 
