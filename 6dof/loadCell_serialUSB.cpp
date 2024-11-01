@@ -114,9 +114,24 @@ void read_from_m8123b2(const std::string& port) {
     SerialPort serialPort(port, BaudRate::B_115200);
     serialPort.SetTimeout(-1);
     serialPort.Open();
+    //serialPort.Write(cmd_stop_streaming.data(), cmd_stop_streaming.size());
+    serialPort.FlushIO();
     std::cout << "Serial port " << port << " opened successfully.\n";
 
+    std::cout << "Sending command as ASCII: ";
+	for (const auto& byte : cmd_samp_rate_300) {
+		std::cout << byte; // This works if the data represents printable characters
+	}
+	std::cout << std::endl;
+
     serialPort.Write(cmd_samp_rate_300.data(), cmd_samp_rate_300.size());
+    std::string responseStr;
+    serialPort.Read(responseStr);
+	if (responseStr == "ACK+SMPR=300$OK\r\n") { // Check if the response matches the expected string
+        std::cout << "Sensor responded with the correct confirmation: " << responseStr << std::endl;
+    } else {
+        std::cout << "Unexpected response from sensor: " << responseStr << std::endl;
+    }
     usleep(100000);
     
     serialPort.Write(cmd_start_streaming.data(), cmd_start_streaming.size());
@@ -124,7 +139,7 @@ void read_from_m8123b2(const std::string& port) {
     std::vector<std::vector<float>> all_channel_data(6);
 
     auto start_time = std::chrono::steady_clock::now();
-    auto end_time = start_time + std::chrono::seconds(10);
+    auto end_time = start_time + std::chrono::seconds(2);
 
     try {
         while (std::chrono::steady_clock::now() < end_time) {

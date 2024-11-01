@@ -86,6 +86,7 @@ def read_from_m8123b2(port, baudrate, parity, stopbits, bytesize):
     ser = serial.Serial(port=port, baudrate=baudrate, parity=parity, stopbits=stopbits, bytesize=bytesize, timeout=1)
     print(f"Serial port {port} opened successfully.")
 
+
     ser.write(bytearray(cmd_samp_rate_300))
     print(f"Sent data: {cmd_samp_rate_300}")
     
