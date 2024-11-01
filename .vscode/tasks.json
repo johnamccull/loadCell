@@ -10,26 +10,17 @@
                 "${workspaceFolder}/SerialPort/SerialPort.cpp",
                 "${workspaceFolder}/6dof/loadCell_serialUSB.cpp",//"${workspaceFolder}/6dof/loadCell_serialUSB.cpp","${workspaceFolder}/fsr/fsr_serialUSB.cpp"
                 "-o",
-                "${workspaceFolder}/6dof/loadCell_serialUSB"//"${workspaceFolder}/6dof/loadCell_serialUSB""${workspaceFolder}/fsr/fsr_serialUSB"
+                "${workspaceFolder}/6dof/loadCell_serialUSB",//"${workspaceFolder}/6dof/loadCell_serialUSB""${workspaceFolder}/fsr/fsr_serialUSB"
                 /*"-I${workspaceFolder}/CppLinuxSerial/src",
                 "-L${workspaceFolder}/CppLinuxSerial/build",
                 "-lCppLinuxSerial"*/
+                
+                // Include paths
+                "-I${workspaceFolder}/path/to/matplotlib-cpp",
+                "-I/usr/include/python3.8", 
 
-                /*"-fdiagnostics-color=always",
-                "-g",
-                "-Wall",
-                "-Wextra",
-                "${workspaceFolder}/SerialPort/SerialPort.cpp",
-                "${workspaceFolder}/6dof/loadCell_serialUSB.cpp",
-                // Uncomment the following lines if needed
-                // "${workspaceFolder}/6dof/loadCell_serialUSB.cpp",
-                // "${workspaceFolder}/fsr/fsr_serialUSB.cpp",
-                "-o",
-                "${workspaceFolder}/6dof/loadCell_serialUSB",
-                "-I${workspaceFolder}/CppLinuxSerial/src",
-                "-L${workspaceFolder}/CppLinuxSerial/build",
-                "-lCppLinuxSerial"*/
-
+                // Link with Python 3.8 library
+                "-lpython3.8"
             ],
             "options": {
                 "cwd": "${fileDirname}"
